@@ -4,167 +4,184 @@
 <!--
 A widget bar
 -->
-<polymer-element
-name= "sentiment-bar"
-attributes= "val sentiment heart emoticon expand cardid socket"
-on-tap= "{{tapHandler}}">
-<template>
-<style>
-:host #bar{
-  width: 23px;
-  cursor: pointer;
-  text-align: center;
-  -webkit-transition: height 1s;
-  -moz-transition: height 1s;
-  transition: height 1s;
-  border-radius: 2px 2px 0px 0px;
-  -webkit-box-shadow: 0px 2px 5px 0px rgba(0,0,0,0.45);
-  -moz-box-shadow: 0px 2px 5px 0px rgba(0,0,0,0.45);
-  box-shadow: 0px 2px 5px 0px rgba(0,0,0,0.45);
-}
-:host #emoticon{
-  font-family: HelveticaNeue-Medium, Arial;
-  font-size: 12px;
-  color: rgba(255,255,255,0.75);
-}
-:host core-icon > svg {
-  fill: rgba(255,255,255,0.5);
-  transform:         scale(0.75);
-  -moz-transform:    scale(0.75);
-  -webkit-transform: scale(0.75);
-}
-:host #ripple{
-  width: 23px;
-  overflow:hidden;
-}
-#favorite{
-  top: -20px;
-}
-</style>
-<div id="bar">
-  <div id="emoticon"></div>
-  <core-icon icon='' size='24' id="favorite"></core-icon>
-  <paper-ripple id="ripple" fit class="recenteringTouch"></paper-ripple>
-</div>
-<x-websocket id="cardSocket" url="{{socket}}" ></x-websocket>
-</template>
-<script>
-Polymer('sentiment-bar', {
-  attached: function() {
-    var self      = this.$;
-    var cardid    = this.cardid;
-    var sentiment = this.sentiment;
-    var scoope = this;
-    /*
-    * WebSocket event handler.
-    */
-    self.cardSocket.addEventListener("open", function() {
-      self.cardSocket.send('{"path": "events", "message": "subscribe", "content":"'+cardid+':sentiment-bars"}');
-    });
-    self.cardSocket.addEventListener("message", function(event) {
-      var socketData = JSON.parse(event.detail.data).data;
-      if(sentiment == "very-positive"){
-        if(!isNaN(socketData.excellent)){
-          if(socketData.excellent > 20){
-            self.bar.style.height = socketData.excellent+"px";
-            self.ripple.style.height = socketData.excellent+"px";
-          } else {
-            self.bar.style.height = "20px";
-            self.ripple.style.height = "20px";
+<polymer-element name="sentiment-bar" attributes="val sentiment heart emoticon expand cardid socket" on-tap="{{tapHandler}}">
+  <template>
+    <style>
+      :host #bar {
+        width: 23px;
+        cursor: pointer;
+        text-align: center;
+        -webkit-transition: height 1s;
+        -moz-transition: height 1s;
+        transition: height 1s;
+        border-radius: 2px 2px 0px 0px;
+        -webkit-box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.45);
+        -moz-box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.45);
+        box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.45);
+      }
+      :host #emoticon {
+        font-family: HelveticaNeue-Medium, Arial;
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.75);
+      }
+      :host core-icon > svg {
+        fill: rgba(255, 255, 255, 0.5);
+        transform: scale(0.75);
+        -moz-transform: scale(0.75);
+        -webkit-transform: scale(0.75);
+      }
+      :host #ripple {
+        width: 23px;
+        overflow: hidden;
+      }
+      #favorite {
+        top: -20px;
+      }
+    </style>
+    <div id="bar">
+      <div id="emoticon"></div>
+      <core-icon icon='' size='24' id="favorite"></core-icon>
+      <paper-ripple id="ripple" fit class="recenteringTouch"></paper-ripple>
+    </div>
+    <x-websocket id="cardSocket" url="{{socket}}"></x-websocket>
+  </template>
+  <script>
+    Polymer('sentiment-bar', {
+      attached: function() {
+        var self = this.$;
+        var cardid = this.cardid;
+        var sentiment = this.sentiment;
+        var scoope = this;
+        /*
+         * WebSocket event handler.
+         */
+        self.cardSocket.addEventListener("open", function() {
+          self.cardSocket.send('{"path": "events", "message": "subscribe", "content":"' + cardid + ':sentiment-bars"}');
+        });
+        self.cardSocket.addEventListener("message", function(event) {
+          var socketData = JSON.parse(event.detail.data).data;
+          if (sentiment == "very-positive") {
+            if (!isNaN(socketData.excellent)) {
+              if (socketData.excellent > 20) {
+                self.bar.style.height = socketData.excellent + "px";
+                self.ripple.style.height = socketData.excellent + "px";
+              } else {
+                self.bar.style.height = "20px";
+                self.ripple.style.height = "20px";
+              }
+              self.emoticon.innerHTML = ":D";
+              scoope.asyncFire('sentiment-bar-updated', {
+                msg: socketData.excellent.toFixed(0)
+              });
+            }
+          } else if (sentiment == "positive") {
+            if (!isNaN(socketData.good)) {
+              if (socketData.good > 20) {
+                self.bar.style.height = socketData.good + "px";
+                self.ripple.style.height = socketData.good + "px";
+              } else {
+                self.bar.style.height = "20px";
+                self.ripple.style.height = "20px";
+              }
+              self.emoticon.innerHTML = ":)";
+              scoope.asyncFire('sentiment-bar-updated', {
+                msg: socketData.good.toFixed(0)
+              });
+            }
+          } else if (sentiment == "negative") {
+            if (!isNaN(socketData.bad)) {
+              if (socketData.bad > 20) {
+                self.bar.style.height = socketData.bad + "px";
+                self.ripple.style.height = socketData.bad + "px";
+              } else {
+                self.bar.style.height = "20px";
+                self.ripple.style.height = "20px";
+              }
+              self.emoticon.innerHTML = ":(";
+              scoope.asyncFire('sentiment-bar-updated', {
+                msg: socketData.bad.toFixed(0)
+              });
+            }
+          } else if (sentiment == "very-negative") {
+            if (!isNaN(socketData.terrible)) {
+              if (socketData.terrible > 20) {
+                self.bar.style.height = socketData.terrible + "px";
+                self.ripple.style.height = socketData.terrible + "px";
+              } else {
+                self.bar.style.height = "20px";
+                self.ripple.style.height = "20px";
+              }
+              self.emoticon.innerHTML = ":[";
+              scoope.asyncFire('sentiment-bar-updated', {
+                msg: socketData.terrible.toFixed(0)
+              });
+            }
+          } else if (sentiment == "neutral") {
+            if (!isNaN(socketData.neutral)) {
+              if (socketData.neutral > 20) {
+                self.bar.style.height = socketData.neutral + "px";
+                self.ripple.style.height = socketData.neutral + "px";
+              } else {
+                self.bar.style.height = "20px";
+                self.ripple.style.height = "20px";
+              }
+              scoope.asyncFire('sentiment-bar-updated', {
+                msg: socketData.neutral.toFixed(0)
+              })
+            }
           }
-          self.emoticon.innerHTML =":D";
-          scoope.asyncFire('sentiment-bar-updated', {msg: socketData.excellent.toFixed(0)});
+        });
+        /*
+         * Set the bar height according to sentiment value
+         */
+        self.bar.style.height = this.val + "px";
+        if (this.sentiment == "very-positive") {
+          self.bar.style.background = "#00C273";
+          self.ripple.style.color = "#29ffa8";
+        } else if (this.sentiment == "positive") {
+          self.bar.style.background = "#86C300";
+          self.ripple.style.color = "#bcff2a";
+        } else if (this.sentiment == "negative") {
+          self.bar.style.background = "#FF8A00";
+          self.ripple.style.color = "#fff";
+        } else if (this.sentiment == "very-negative") {
+          self.bar.style.background = "#FF0035";
+          self.ripple.style.color = "#ffd9e1";
+        } else if (this.sentiment == "neutral") {
+          self.bar.style.background = "#FBBF00";
+          self.ripple.style.color = "#fff";
         }
-      } else if(sentiment == "positive"){
-        if(!isNaN(socketData.good)){
-          if(socketData.good > 20){
-            self.bar.style.height = socketData.good+"px";
-            self.ripple.style.height = socketData.good+"px";
-          } else {
-            self.bar.style.height = "20px";
-            self.ripple.style.height = "20px";
-          }
-          self.emoticon.innerHTML =":)";
-          scoope.asyncFire('sentiment-bar-updated', {msg: socketData.good.toFixed(0)});
+        if (this.heart == "true") {
+          self.favorite.setAttribute("icon", "favorite");
         }
-      } else if(sentiment == "negative"){
-        if(!isNaN(socketData.bad)){
-          if(socketData.bad > 20){
-            self.bar.style.height = socketData.bad+"px";
-            self.ripple.style.height = socketData.bad+"px";
-          } else {
-            self.bar.style.height = "20px";
-            self.ripple.style.height = "20px";
+        /*
+         * Set the emoticon only if threshold is passed
+         */
+        if (this.emoticon == "true" && parseInt(this.val) > 10) {
+          switch (this.sentiment) {
+            case "neutral":
+              self.emoticon.innerHTML = ":|";
+              break;
+            case "positive":
+              self.emoticon.innerHTML = ":)";
+              break;
+            case "negative":
+              self.emoticon.innerHTML = ":(";
+              break;
+            case "very-positive":
+              self.emoticon.innerHTML = ":D";
+              break;
+            case "very-negative":
+              self.emoticon.innerHTML = "D:";
+              break;
           }
-          self.emoticon.innerHTML =":(";
-          scoope.asyncFire('sentiment-bar-updated', {msg: socketData.bad.toFixed(0)});
         }
-      } else if(sentiment == "very-negative"){
-        if(!isNaN(socketData.terrible)){
-          if(socketData.terrible > 20){
-            self.bar.style.height = socketData.terrible+"px";
-            self.ripple.style.height = socketData.terrible+"px";
-          } else {
-            self.bar.style.height = "20px";
-            self.ripple.style.height = "20px";
-          }
-          self.emoticon.innerHTML =":[";
-          scoope.asyncFire('sentiment-bar-updated', {msg: socketData.terrible.toFixed(0)});
-        }
-      } else if(sentiment == "neutral"){
-        if(!isNaN(socketData.neutral)){
-          if(socketData.neutral > 20){
-            self.bar.style.height = socketData.neutral+"px";
-            self.ripple.style.height = socketData.neutral+"px";
-          } else {
-            self.bar.style.height = "20px";
-            self.ripple.style.height = "20px";
-          }
-          scoope.asyncFire('sentiment-bar-updated', {msg: socketData.neutral.toFixed(0)})
+      },
+      tapHandler: function() {
+        if (this.expand == "true") {
+          this.asyncFire('sentiment-bar-expanded');
         }
       }
     });
-    /*
-    * Set the bar height according to sentiment value
-    */
-    self.bar.style.height = this.val+"px";
-    if(this.sentiment == "very-positive"){
-      self.bar.style.background = "#00C273";
-      self.ripple.style.color = "#29ffa8";
-    } else if(this.sentiment == "positive"){
-      self.bar.style.background = "#86C300";
-      self.ripple.style.color = "#bcff2a";
-    } else if(this.sentiment == "negative"){
-      self.bar.style.background = "#FF8A00";
-      self.ripple.style.color = "#fff";
-    } else if(this.sentiment == "very-negative"){
-      self.bar.style.background = "#FF0035";
-      self.ripple.style.color = "#ffd9e1";
-    } else if(this.sentiment == "neutral"){
-      self.bar.style.background = "#FBBF00";
-      self.ripple.style.color = "#fff";
-    }
-    if(this.heart == "true"){
-      self.favorite.setAttribute("icon","favorite");
-    }
-    /*
-    * Set the emoticon only if threshold is passed
-    */
-    if(this.emoticon == "true" && parseInt(this.val) > 10){
-      switch(this.sentiment) {
-        case "neutral":      self.emoticon.innerHTML =":|"; break;
-        case "positive":     self.emoticon.innerHTML =":)"; break;
-        case "negative":     self.emoticon.innerHTML =":("; break;
-        case "very-positive":self.emoticon.innerHTML =":D"; break;
-        case "very-negative":self.emoticon.innerHTML ="D:"; break;
-      }
-    }
-  },
-  tapHandler: function() {
-    if(this.expand == "true") {
-      this.asyncFire('sentiment-bar-expanded');
-    }
-  }
-});
-</script>
+  </script>
 </polymer-element>

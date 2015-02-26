@@ -10,30 +10,31 @@ action-bar: A bar which holds a set of action items.
 -->
 <polymer-element name="action-container" vertical layout end>
   <template>
-  <style>
-  :host{
-    padding: 0px;
-    margin:  3px;
-  }
-  :host paper-fab {
-    margin: 3px;
-    background: #107FC9;
-  }
-  :host paper-fab::shadow svg{
-    fill: white;
-  }
-  </style>
-  <paper-fab mini icon="keep"></paper-fab>
-  <paper-fab mini icon="social:share-alt"></paper-fab>
-  <paper-fab mini icon="communication:comment" on-tap="{{commentTap}}"></paper-fab>
-</template>
-<script>
-Polymer('action-container', {
-  commentTap: function(){
-    this.asyncFire('tapped-action-comment',
-    {id: this.parentNode.parentNode.parentNode.getElementById("cardid").innerHTML,
-     title: this.parentNode.getElementsByTagName("h1")[0].innerHTML});
-  }
-});
-</script>
+    <style>
+      :host {
+        padding: 0px;
+        margin: 3px;
+      }
+      :host paper-fab {
+        margin: 3px;
+        background: #107FC9;
+      }
+      :host paper-fab::shadow svg {
+        fill: white;
+      }
+    </style>
+    <paper-fab mini icon="keep"></paper-fab>
+    <paper-fab mini icon="social:share-alt"></paper-fab>
+    <paper-fab mini icon="communication:comment" on-tap="{{commentTap}}"></paper-fab>
+  </template>
+  <script>
+    Polymer('action-container', {
+      commentTap: function() {
+        this.asyncFire('tapped-action-comment', {
+          id: this.parentNode.parentNode.parentNode.getElementById("cardid").innerHTML,
+          title: this.parentNode.getElementsByTagName("h1")[0].innerHTML
+        });
+      }
+    });
+  </script>
 </polymer-element>
