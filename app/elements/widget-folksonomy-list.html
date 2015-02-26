@@ -1,0 +1,144 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/x-websocket/dist/x-websocket.html">
+<link rel="import" href="../bower_components/core-animation/core-animation.html">
+<link href='//fonts.googleapis.com/css?family=Roboto:400,300,100' rel='stylesheet' type='text/css'>
+<!--
+@author Francisco Gutiérrez - fsalvador23@gmail.com
+/* Folksonomy input demo:
+folksonomy='{"folksonomy": [
+"Peña Nieto",
+"Reforma",
+"Gasolina",
+"Capital",
+"Precio",
+"Familia",
+"Reforma",
+"Gasolina",
+"Capital",
+"Precio",
+"Familia",
+"Reforma",
+"Gasolina",
+"Capital",
+"Precio",
+"Familia",
+"Ice Bucket Challenge"
+]}'
+*/
+-->
+<polymer-element name="widget-folksonomy-list"
+attributes="folksonomy scrolling cardid socket sentiment"
+on-tap="{{tapHandler}}" vertical layout center>
+<template>
+<style>
+:host{
+  /*position: absolute*/
+  width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis
+}
+#left{
+  font-family: 'Roboto','Helvetica', sans-serif;
+  color: white;
+  font-size: 14px;
+  padding: 2px;
+  font-weight: 300;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis
+  text-align: center;
+}
+#right{
+  font-family: 'Roboto','Helvetica', sans-serif;
+  color: white;
+  font-size: 14px;
+  padding: 2px;
+  font-weight: 300;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis
+}
+</style>
+<div id="left"></div>
+<div id="right"></div>
+<x-websocket id="cardSocket" url="{{socket}}" ></x-websocket>
+</template>
+<script>
+Polymer('widget-folksonomy-list', {
+  attached: function() {
+    var self= this.$;
+    var socket = this.socket;
+    var cardid = this.cardid;
+    var sentiment = this.sentiment;
+    var folksonomy = [];
+    /*Define some fancy animations */
+    var anm1 = new CoreAnimation();
+    anm1.duration = 1000;
+    anm1.keyframes = [{opacity: 0},{opacity: 1}];
+    anm1.target = self.left;
+    var anm2 = new CoreAnimation();
+    anm2.duration = 1000;
+    anm2.keyframes = [{opacity: 0},{opacity: 1}];
+    anm2.target = self.right;
+    /*
+    * WebSocket event handler.
+    */
+    self.cardSocket.addEventListener("open", function() {
+      if(!sentiment){
+        self.cardSocket.send('{"path":"events","message":"subscribe","content":"'+cardid+':folksonomy-global:add"}');
+      } else if(sentiment == "very-positive"){
+        self.cardSocket.send('{"path":"events","message":"subscribe","content":"'+cardid+':folksonomy-excellent:add"}');
+      } else if(sentiment == "positive"){
+        self.cardSocket.send('{"path":"events","message":"subscribe","content":"'+cardid+':folksonomy-good:add"}');
+      } else if(sentiment == "neutral"){
+        self.cardSocket.send('{"path":"events","message":"subscribe","content":"'+cardid+':folksonomy-neutral:add"}');
+      } else if(sentiment == "bad"){
+        self.cardSocket.send('{"path":"events","message":"subscribe","content":"'+cardid+':folksonomy-bad:add"}');
+      } else if(sentiment == "very-bad"){
+        self.cardSocket.send('{"path":"events","message":"subscribe","content":"'+cardid+':folksonomy-terrible:add"}');
+      }
+    });
+    self.cardSocket.addEventListener("message", function(event) {
+      var data = JSON.parse(event.detail.data).data;
+      if((data.substr(data.length-3) != "add") && (data.length > 3) && (data.substring(0,4) != "http")) {
+        folksonomy[folksonomy.length] = data;
+      }
+      var left  = randomItem();
+      var right = randomItem();
+      anm1.play();
+      anm2.play();
+      if(left != right){
+        self.left.innerHTML  = left;
+        self.right.innerHTML = right;
+      } else {
+        self.left.innerHTML = "";
+        self.right.innerHTML= left;
+      }
+    });
+    window.setInterval(function(){
+      var left  = randomItem();
+      var right = randomItem();
+      anm1.play();
+      anm2.play();
+      if(left != right){
+        self.left.innerHTML  = left;
+        self.right.innerHTML = right;
+      } else {
+        self.left.innerHTML = "";
+        self.right.innerHTML= left;
+      }
+    }, 5000);
+    function randomItem(){
+      var random = folksonomy[Math.floor(Math.random()*folksonomy.length)];
+      if(folksonomy.length == 0){
+        random = " ";
+      }
+      return random;
+    }
+  },
+  ready: function(){}
+});
+</script>
+</polymer-element>
