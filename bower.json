@@ -1,15 +1,16 @@
 {
   "name": "expression-components",
-  "version": "0.0.1",
+  "version": "0.3",
   "dependencies": {
-    "core-elements": "Polymer/core-elements#^0.4.0",
-    "paper-elements": "Polymer/paper-elements#^0.4.0",
-    "polymer": "Polymer/polymer#^0.4.0",
-    "emoji": "0.1.2",
+    "core-elements": "Polymer/core-elements",
+    "paper-elements": "Polymer/paper-elements",
+    "polymer": "Polymer/polymer",
+    "emoji": "^0.1.2",
+    "material-design-icons": "*",
     "x-websocket": "^0.2.0",
     "animate.css": "https://github.com/daneden/animate.css.git"
   },
   "devDependencies": {
-    "polymer-test-tools": "Polymer/polymer-test-tools#^0.4.0"
+    "polymer-test-tools": "Polymer/polymer-test-tools"
   }
 }
