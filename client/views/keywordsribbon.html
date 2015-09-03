@@ -1,0 +1,10 @@
+<template name="keywordsribbon">
+  <div class="ribbon stopselect">
+    <div class="keyword-icon fa fa-comments"></div>
+    <div class="keyword-container">
+      {{#each keywords}}
+      <paper-button class="keyword">{{this}}</paper-button>
+      {{/each}}
+    </div>
+  </div>
+</template>

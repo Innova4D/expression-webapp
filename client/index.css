@@ -1,0 +1,348 @@
+html, body {
+  height: 100%;
+  background: #f6f6f6;
+}
+
+/*** Important ***/
+/* Using Shadow to chrome, non-using for safari (weird shim-shadowdom bug with meteor) **/
+
+core-scaffold .core-header-panel {
+  background: #fb9737;
+  height: 100%;
+}
+
+core-scaffold .core-header-panel #section {
+  background: #f6f6f6 !important;
+}
+
+core-scaffold #scrim {
+  z-index: 10000;
+}
+
+core-scaffold::shadow core-toolbar { background: white; }
+core-scaffold core-toolbar { background: white; }
+
+core-scaffold::shadow core-header-panel {  background: #f6f6f6; }
+core-scaffold core-header-panel {  background: #f6f6f6; }
+
+core-scaffold core-toolbar #bottomBar{
+  width: 100%;
+  background: white;
+  padding: 0px;
+  margin: 0px;
+}
+
+core-scaffold::shadow #mainContainer {
+  background: #f6f6f6;
+  height: 100%;
+}
+
+core-scaffold .core-toolbar{
+  position: absolute;
+  width: 100%;
+  background: #80e3ea;
+}
+
+core-scaffold .search-header { color: #424242; }
+core-scaffold::shadow .search-header { color: #424242; }
+
+core-scaffold #menuButton { color: #424242; }
+core-scaffold::shadow #menuButton { color: #424242; }
+
+core-scaffold .sentiment-cards-section {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-flex-wrap: wrap;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  background: #f6f6f6;
+}
+
+::content > * {
+  margin: 0;
+}
+
+core-scaffold .header-title {
+  font-weight: 100;
+  font-family: 'Roboto','Helvetica', sans-serif;
+  font-size: 42px;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  width: 100%;
+  color: #424242;
+  padding: 15px;
+  display: inline;
+}
+
+.stopselect{
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+core-scaffold .paper-tabs {
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+  color: black;
+  width: 100%;
+}
+
+core-scaffold paper-tabs {
+  width: 100%;
+  font-weight: 400;
+  background: white;
+  border-bottom: 1px solid rgba(131, 132, 131, 0.45);;
+  font-family: 'Roboto','Helvetica', sans-serif;
+  color: black;
+}
+
+core-scaffold paper-tab #ink { color: #fec88b; cursor: pointer; }
+core-scaffold paper-tab::shadow #ink { color: #fec88b; cursor: pointer; }
+
+core-scaffold paper-tabs #selectionBar { background-color: #fd9826;  height: 4px; }
+core-scaffold paper-tabs::shadow #selectionBar { background-color: #fd9826;  height: 4px; }
+
+
+/** Login **/
+
+#login-buttons {
+  background: white;
+  font-family: Roboto, Helvetica, sans-serif;
+  font-size: 14px;
+  font-weight: 300;
+  /*border-radius: 5px;*/
+  /*display: none;*/
+  right: 30px;
+  top: -40px;
+  position: absolute;
+  z-index: 1;
+}
+
+.accounts-dialog {
+  box-shadow: 0px 5px 8px 0px rgba(0,0,0,0.45);
+  margin-top: 8px;
+  border-radius:5px;
+  padding: 5px;
+}
+
+.login-form {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  color: #424242;
+  font-weight: 300;
+  border-radius: 5px;
+
+  background: white;
+  width: 300px;
+  height: 200px;
+}
+
+.login-form input {
+  border-radius: 3px;
+  border: 1px solid #37336b;
+  background: white;
+  color: #424242;
+  padding: 2px;
+  margin: 2px;
+  width: 200px;
+}
+
+#login-email-label-and-input {
+  -webkit-align-self: flex-end;
+  -ms-flex-item-align: end;
+  align-self: flex-end;
+  margin-top: 5px;
+  margin-right: 15px;
+}
+
+#login-password-label-and-input {
+  -webkit-align-self: flex-end;
+  -ms-flex-item-align: end;
+  align-self: flex-end;
+  margin-top: 5px;
+  margin-right: 15px;
+}
+
+.accounts-dialog {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -webkit-box-pack: end;
+  -webkit-justify-content: flex-end;
+  -ms-flex-pack: end;
+  justify-content: flex-end;
+  color: #424242;
+}
+
+.login-button {
+  -webkit-align-self: flex-end;
+  -ms-flex-item-align: end;
+  align-self: flex-end;
+  border: 1px solid #afb9c4;
+  border-radius: 5px;
+  margin-top: 10px;
+  padding: 5px;
+  color: #424242;
+  cursor: pointer;
+  font-weight: 300;
+}
+
+.login-link-text {
+  -webkit-align-self: flex-end;
+  -ms-flex-item-align: end;
+  align-self: flex-end;
+  border: 1px solid #afb9c4;
+  border-radius: 5px;
+  margin-top: 15px;
+  padding: 5px;
+  color: #424242;
+  cursor: pointer;
+  font-weight: 300;
+  background: white;
+}
+
+.login-link-text:hover {
+  color: #424242;
+}
+
+.login-close-text {
+  position: absolute;
+  right: 0;
+  top: -22px;
+  /*align-self: flex-end;*/
+  border: 1px solid #d0495a;
+  border-radius: 5px;
+  margin-top: 15px;
+  padding: 5px;
+  color: #424242;
+  cursor: pointer;
+  font-weight: 300;
+  background: white;
+}
+
+#forgot-password-email-label-and-input {
+  -webkit-align-self: flex-start;
+  -ms-flex-item-align: end;
+  align-self: flex-end;
+  margin-right: 15px;
+}
+
+.login-close-text:hover {
+  color: #424242;
+}
+
+.error-message {
+  color: #424242;
+}
+
+.additional-link-container a {
+  color: #424242;
+  cursor: pointer;
+}
+
+.additional-link-container a:hover {
+  color: #9ea4a8;
+  text-decoration: none;
+}
+
+.user-profile {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+}
+
+.user-photo-account {
+  background-image: url("images/user1.png");
+  background-size: cover;
+  width:  100px;
+  height: 100px;
+  border-radius: 50%;
+  margin: 8px;
+}
+
+.user-name-account {
+  color: white;
+  font-weight: 100;
+  font-size:  22px;
+  opacity: 0.85;
+  filter: alpha(opacity=85);
+}
+
+/*** Sidebar ***/
+
+.expression-description {
+  padding: 10px;
+  color: #ffffff;
+  font-size: 12px;
+  font-family: Roboto,Helvetica, sans-serif;
+  font-weight: 300;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.expression-description img {
+  opacity: 0.95;
+}
+
+.section-message {
+  display: none;
+  height: 300px;
+  flex-direction:  column;
+  justify-content: center;
+  align-items:     center;
+
+  color: #9c9c9c;
+  font-family: Roboto, Helvetica, sans-serif;
+  font-size: 24px;
+  text-align: center;
+  font-weight: 100;
+}

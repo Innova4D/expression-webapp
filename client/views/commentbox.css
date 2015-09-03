@@ -1,0 +1,158 @@
+/*
+ * Comment-box CSS.
+ */
+
+.comment-box {
+  top: 0;
+  position: absolute;
+  background: #e5e5e5;
+  width: 100%;
+  height:100%;
+  z-index: 100;
+}
+
+.comment-box .comment-box-toolbar{
+  background: white;
+  border-bottom: 2px solid #cccccc;
+  height: 140px;
+}
+
+.comment-box-toolbar-top {
+  display:  flex;
+  padding: 15px;
+}
+
+.comment-box-core-header-panel {
+  height: 110px;
+  background: #34495c;
+  position: static;
+}
+
+.comment-box paper-fab {
+  background: #2baac4;
+}
+
+.comment-box .close-comment-box {
+  background: #e75869;
+}
+
+.comment-box .comment-box-title {
+  font-family: roboto, Helvetica, sans-serif;
+  color: #424242;
+  font-size: 28px;
+  font-weight: 100;
+  /*cursor: pointer;*/
+}
+
+.comment-box .comment-box-subtitle {
+  position: absolute;
+  left: 80px;
+  bottom: -5px;
+  font-family: roboto, Helvetica, sans-serif;
+  color: #a7afb7;
+  font-size: 11px;
+  font-weight: 300;
+  /*cursor: pointer;*/
+}
+
+.comment-box .commentbox-sentiment-dot {
+  width: 10px;
+  height:10px;
+  background: #68ca75;
+  border-radius: 50%;
+  margin: 3px;
+  float: left;
+}
+
+.comment-box .card-sentiment-dot {
+  width: 10px;
+  height:10px;
+  background: #68ca75;
+  border-radius: 50%;
+  margin: 3px;
+}
+
+.comment-box-section {
+  background: #e5e5e5;
+  padding-bottom: 57px;
+  height: 100%;
+  -webkit-justify-content: space-around;
+  -ms-flex-pack: distribute;
+  justify-content: space-around;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+}
+
+.comment-box .comment-box-bottom {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+
+  background: linear-gradient(rgba(255,255,255,0), #efefef 15%) top center no-repeat;
+
+  position: absolute;
+  bottom: 0px;
+  width: 100%;
+  padding: 0 16px 16px 16px;
+}
+
+.comment-box .comment-box-input{
+  width: 100%;
+}
+
+/** Radio Buttons **/
+paper-radio-button.blue::shadow   #onRadio { background-color: #4285f4; }
+paper-radio-button.green::shadow  #onRadio { background-color: #29b872; }
+paper-radio-button.yellow::shadow #onRadio { background-color: #f9bd3e; }
+paper-radio-button.red::shadow    #onRadio { background-color: #e35a6d; }
+
+paper-radio-button.blue   #onRadio { background-color: #4285f4; }
+paper-radio-button.green  #onRadio { background-color: #29b872; }
+paper-radio-button.yellow #onRadio { background-color: #f9bd3e; }
+paper-radio-button.red    #onRadio { background-color: #e35a6d; }
+
+paper-radio-button[checked].blue::shadow   #offRadio { border-color: #4285f4; }
+paper-radio-button[checked].green::shadow  #offRadio { border-color: #29b872; }
+paper-radio-button[checked].yellow::shadow #offRadio { border-color: #f9bd3e; }
+paper-radio-button[checked].red::shadow    #offRadio { border-color: #e35a6d; }
+paper-radio-button::shadow #offRadio { border-color: #8b95a0; }
+
+paper-radio-button[checked].blue   #offRadio { border-color: #4285f4; }
+paper-radio-button[checked].green  #offRadio { border-color: #29b872; }
+paper-radio-button[checked].yellow #offRadio { border-color: #f9bd3e; }
+paper-radio-button[checked].red    #offRadio { border-color: #e35a6d; }
+paper-radio-button #offRadio { border-color: #8b95a0; }
+
+
+paper-radio-button.blue::shadow   #ink { color: #4285f4; }
+paper-radio-button.green::shadow  #ink { color: #29b872; }
+paper-radio-button.yellow::shadow #ink { color: #f9bd3e; }
+paper-radio-button.red::shadow    #ink { color: #e35a6d; }
+
+paper-radio-button.blue   #ink { color: #4285f4; }
+paper-radio-button.green  #ink { color: #29b872; }
+paper-radio-button.yellow #ink { color: #f9bd3e; }
+paper-radio-button.red    #ink { color: #e35a6d; }
+
+paper-radio-button[checked]::shadow #radioLabel { color: #424242; }
+paper-radio-button[checked] #radioLabel { color: #424242; }
+
+paper-radio-button::shadow #radioLabel {
+  font-family: roboto, Helvetica, sans-serif;
+  color: #a7afb7;
+  font-size: 13px;
+  font-weight: 300;
+  cursor: pointer;
+}
+
+paper-radio-button #radioLabel {
+  font-family: roboto, Helvetica, sans-serif;
+  color: #a7afb7;
+  font-size: 13px;
+  font-weight: 300;
+  cursor: pointer;
+}

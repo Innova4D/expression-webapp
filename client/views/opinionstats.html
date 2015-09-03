@@ -1,0 +1,55 @@
+<template name="opinionstats">
+  <div class="opinionstats-full animated fadeIn">
+
+    <div class="stats-topmenu">
+      <paper-fab icon="close" class="close-stats-box"></paper-fab>
+      <div class="stats-title-filter">
+        <div class="stats-title">{{title}}</div>
+        <div class="stats-filtering">
+          Show me stats from
+          <paper-dropdown-menu label="Last 24 Hours">
+            <paper-dropdown class="dropdown">
+              <core-menu class="menu">
+                <paper-item>Last 24 Hours</paper-item>
+                <paper-item>This Week</paper-item>
+                <paper-item>Last Two Weeks</paper-item>
+                <paper-item>Last Month</paper-item>
+                <paper-item>Custom</paper-item>
+              </core-menu>
+            </paper-dropdown>
+          </paper-dropdown-menu>
+        </div>
+      </div>
+    </div>
+    <div class="google-chart-container">
+      <div id="stats-chart"></div>
+    </div>
+    <!-- <div class="stats-results-words">
+      Hola mundo!!!
+    </div> -->
+    <div class="stats-results-container">
+      <div class="hidden">{{commentsCount}}</div>
+      <div class="stats-result stats-positives">
+        <div class="stats-numbers">
+          <div class="stats-percent stats-positives-percent">{{positivesPercent}}%</div>
+          <div class="stats-count stats-positives-count">{{positivesCount}} Comments</div>
+        </div>
+        <div id="cloud-positives" class="stats-results-cloud">Positives</div>
+      </div>
+      <div class="stats-result stats-neutrals">
+        <div class="stats-numbers">
+          <div class="stats-percent stats-neutrals-percent">{{neutralsPercent}}%</div>
+          <div class="stats-count stats-positives-count">{{neutralsCount}} Comments</div>
+        </div>
+        <div id="cloud-neutrals"  class="stats-results-cloud">Neutrals</div>
+      </div>
+      <div class="stats-result stats-negatives">
+        <div class="stats-numbers">
+          <div class="stats-percent stats-negatives-percent">{{negativesPercent}}%</div>
+          <div class="stats-count stats-positives-count">{{negativesCount}} Comments</div>
+        </div>
+        <div id="cloud-negatives" class="stats-results-cloud">Negatives</div>
+      </div>
+    </div>
+  </div>
+</template>

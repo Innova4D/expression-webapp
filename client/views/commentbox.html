@@ -1,0 +1,28 @@
+<template name="commentbox">
+  <div class="comment-box animated fadeIn" main>
+    <div class="hidden sentiment-card-id">{{id}}</div>
+    <core-header-panel class="comment-box-core-header-panel">
+      <core-toolbar class="comment-box-toolbar">
+        <paper-fab icon="close" class="close-comment-box"></paper-fab>
+        <h1  class="comment-box-title">{{name}}</h1>
+        <h3  class="comment-box-subtitle"><u>Keywords</u>: {{keywords}}</h3>
+        <div class="commentbox-sentiment-dot"></div>
+        <paper-radio-group class="bottom fit stopselect" selected="all">
+          <paper-radio-button class="blue   showAll"       name="all"    label="All"></paper-radio-button>
+          <paper-radio-button class="green  showPositives" name="positive" label="Positives"></paper-radio-button>
+          <paper-radio-button class="yellow showNeutrals"  name="neutral"  label="Neutrals"></paper-radio-button>
+          <paper-radio-button class="red    showNegatives" name="negative" label="Negatives"></paper-radio-button>
+        </paper-radio-group>
+      </core-toolbar>
+      <div class="comment-box-section">
+        {{#each comments}}
+        {{>singlecommentbox}}
+        {{/each}}
+      </div>
+    </core-header-panel>
+    <div class="comment-box-bottom">
+      <paper-input class="comment-box-input" label="Escribir un comentario…"></paper-input>
+      <paper-fab class="comment-box-send" icon="send"></paper-fab>
+    </div>
+  </div>
+</template>
