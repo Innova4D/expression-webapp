@@ -1,0 +1,192 @@
+<!--
+@license
+The MIT License (MIT)
+
+Copyright (c) 2014 The Photon Services Authors. All rights reserved.
+This code may only be used under the BSD style license
+found at http://opensource.org/licenses/MIT
+
+-->
+<!-- Widget demography-chart element
+Author: Francisco Gutiérrez (fsalvador23@gmail.com)
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/core-icon/core-icon.html">
+<link rel="import" href="../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../bower_components/core-icons/social-icons.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-ripple/paper-ripple.html">
+<link rel="import" href="../bower_components/x-websocket/dist/x-websocket.html">
+<link rel="import" href="../bower_components/core-animation/core-animation.html">
+<link rel="import" href="widget-folksonomy-list.html">
+
+<polymer-element name="widget-demography-chart" attributes="active cardid socket sentiment folksonomy" vertical layout center>
+  <template>
+    <style>
+      :host {
+        cursor: pointer;
+        -webkit-font-smoothing: antialiased;
+      }
+      :host core-icon > svg {
+        fill: white;
+        transform: scale(3);
+        -moz-transform: scale(3);
+        -webkit-transform: scale(3);
+      }
+      :host #button {
+        font-size: 12px;
+        background: #107FC9;
+        color: #fff;
+        width: 90px;
+        height: 28px;
+        -webkit-box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.45);
+        -moz-box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.45);
+        box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.45);
+      }
+      :host #folkChart {
+        position: absolute;
+        /*visibility: hidden;*/
+        
+        top: -60px;
+        left: -50px;
+      }
+      :host #backButton {
+        position: absolute;
+        left: -50px;
+        top: 18px;
+        background: #107FC9;
+        visibility: hidden;
+      }
+      :host #backButton::shadow svg {
+        transform: scale(1);
+        -moz-transform: scale(1);
+        -webkit-transform: scale(1);
+        fill: white;
+      }
+    </style>
+    <div id="widget" vertical layout center>
+      <paper-fab icon="chevron-left" class="mini" id="backButton" on-tap="{{backHandler}}"></paper-fab>
+      <core-icon icon="social:people"></core-icon>
+      <paper-button id="button" on-tap="{{tapHandler}}"></paper-button>
+      <widget-folksonomy-list id="folkChart" cardid="{{cardid}}" socket="{{socket}}" sentiment="{{sentiment}}"></widget-folksonomy-chart>
+    </div>
+    <x-websocket id="cardSocket" url="{{socket}}"></x-websocket>
+  </template>
+  <script>
+    Polymer('widget-demography-chart', {
+      attached: function() {
+        var self = this.$;
+        var socket = this.socket;
+        var cardid = this.cardid;
+        var sentiment = this.sentiment;
+        /*
+         * Comment count: WebSocket event handler.
+         */
+        self.cardSocket.addEventListener("open", function() {
+          /*** commented for testing purposes ***/
+          if (!sentiment) {
+            self.cardSocket.send('{"path":"events","message":"subscribe","content":"' + cardid + ':count-total"}');
+          } else if (sentiment == "very-positive") {
+            self.cardSocket.send('{"path":"events","message":"subscribe","content":"' + cardid + ':count-excellent"}');
+            self.button.style.background = "#00c273";
+          } else if (sentiment == "positive") {
+            self.cardSocket.send('{"path":"events","message":"subscribe","content":"' + cardid + ':count-good"}');
+            self.button.style.background = "#86c300";
+          } else if (sentiment == "neutral") {
+            self.cardSocket.send('{"path":"events","message":"subscribe","content":"' + cardid + ':count-neutral"}');
+            self.button.style.background = "#fbbf00";
+          } else if (sentiment == "bad") {
+            self.cardSocket.send('{"path":"events","message":"subscribe","content":"' + cardid + ':count-bad"}');
+            self.button.style.background = "#ff8a00";
+          } else if (sentiment == "very-bad") {
+            self.cardSocket.send('{"path":"events","message":"subscribe","content":"' + cardid + ':count-terrible"}');
+            self.button.style.background = "#ff0035";
+          }
+        });
+        self.cardSocket.addEventListener("message", function(event) {
+          if (!isNaN(JSON.parse(event.detail.data).data)) {
+            self.button.innerHTML = number_format(JSON.parse(event.detail.data).data);
+          }
+        });
+        if (this.folksonomy == "false") {
+          self.button.setAttribute("raisedButton", "false");
+          self.folkChart.parentNode.removeChild(self.folkChart);
+        }
+      },
+      tapHandler: function() {
+        // var self = this.$;
+        // if(this.active == "true") {
+        //   self.folkChart.style.visibility  = "visible";
+        //   var anmTranslate = new CoreAnimation();
+        //   anmTranslate.duration = 250;
+        //   anmTranslate.fill = "forwards"
+        //   anmTranslate.keyframes = [{transform: "translate(0px,0px)"},{transform: "translate(-50px,0px)"}];
+        //   anmTranslate.target = self.widget;
+        //   anmTranslate.play();
+        //   anmTranslate.addEventListener('core-animation-finish', function(e) {
+        //     var anmTranslate = new CoreAnimation();
+        //     anmTranslate.duration = 300;
+        //     anmTranslate.fill = "forwards"
+        //     anmTranslate.keyframes = [{transform: "translate(-50px,0px)"},{transform: "translate(-50px,-50px)"}];
+        //     anmTranslate.target = self.widget;
+        //     anmTranslate.play();
+        //     anmTranslate.addEventListener('core-animation-finish', function(e) {
+        //       self.backButton.style.visibility = "visible";
+        //     });
+        //   });
+        //   this.asyncFire('tapped-demography-chart-button');
+        // }
+      },
+      backHandler: function() {
+        var self = this.$;
+        self.backButton.style.visibility = "hidden";
+        self.folkChart.style.visibility = "hidden";
+        var anmTranslate = new CoreAnimation();
+        anmTranslate.duration = 400;
+        anmTranslate.fill = "forwards"
+        anmTranslate.keyframes = [{
+          transform: "translate(-50px,-50px)"
+        }, {
+          transform: "translate(0px,-50px)"
+        }];
+        anmTranslate.target = self.widget;
+        anmTranslate.play();
+        anmTranslate.addEventListener('core-animation-finish', function(e) {
+          var anmTranslate = new CoreAnimation();
+          anmTranslate.duration = 250;
+          anmTranslate.fill = "forwards"
+          anmTranslate.keyframes = [{
+            transform: "translate(0px,-50px)"
+          }, {
+            transform: "translate(0px,0px)"
+          }];
+          anmTranslate.target = self.widget;
+          anmTranslate.play();
+        });
+        this.asyncFire('back-demography-chart-handler');
+      }
+    });
+
+    function number_format(number, decimals, dec_point, thousands_sep) {
+      var n = !isFinite(+number) ? 0 : +number,
+        prec = !isFinite(+decimals) ? 0 : Math.abs(decimals),
+        sep = (typeof thousands_sep === 'undefined') ? ',' : thousands_sep,
+        dec = (typeof dec_point === 'undefined') ? '.' : dec_point,
+        toFixedFix = function(n, prec) {
+          // Fix for IE parseFloat(0.55).toFixed(0) = 0;
+          var k = Math.pow(10, prec);
+          return Math.round(n * k) / k;
+        },
+        s = (prec ? toFixedFix(n, prec) : Math.round(n)).toString().split('.');
+      if (s[0].length > 3) {
+        s[0] = s[0].replace(/\B(?=(?:\d{3})+(?!\d))/g, sep);
+      }
+      if ((s[1] || '').length < prec) {
+        s[1] = s[1] || '';
+        s[1] += new Array(prec - s[1].length + 1).join('0');
+      }
+      return s.join(dec);
+    }
+  </script>
+</polymer-element>

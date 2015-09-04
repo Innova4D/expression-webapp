@@ -1,0 +1,16 @@
+{
+  "name": "expression-components",
+  "version": "0.3",
+  "dependencies": {
+    "core-elements": "Polymer/core-elements",
+    "paper-elements": "Polymer/paper-elements",
+    "polymer": "Polymer/polymer",
+    "emoji": "^0.1.2",
+    "material-design-icons": "*",
+    "x-websocket": "^0.2.0",
+    "animate.css": "https://github.com/daneden/animate.css.git"
+  },
+  "devDependencies": {
+    "polymer-test-tools": "Polymer/polymer-test-tools"
+  }
+}

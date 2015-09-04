@@ -1,0 +1,160 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/core-header-panel/core-header-panel.html">
+<link rel="import" href="../bower_components/core-toolbar/core-toolbar.html">
+<link rel="import" href="../bower_components/x-websocket/dist/x-websocket.html">
+<link rel="import" href="sentiment-card.html">
+<link href='//fonts.googleapis.com/css?family=Roboto:400,300,100' rel='stylesheet' type='text/css'>
+<polymer-element name="expression-app" attributes="socket">
+  <template>
+    <style>
+      :host core-header-panel {
+        width: 100%;
+        height: 100%;
+      }
+      :host .core-header {
+        height: 80px;
+        padding: 0 10px;
+        background-color: #107FC9;
+        color: #FFF;
+        transition: height 0.2s;
+        border-bottom: 2px solid #0E71B3;
+      }
+      :host .core-header.tall {
+        height: 180px;
+        border-bottom: 10px solid #0E71B3;
+      }
+      :host .core-header.medium-tall {
+        height: 120px;
+        border-bottom: 10px solid #0E71B3;
+      }
+      :host #content {
+        /*Rendering issue in safari. */
+        /*background: linear-gradient(#FCFEF5,#FFF);*/
+        
+        overflow: hidden;
+      }
+      :host .badge {
+        width: 60px;
+        height: 60px;
+        min-width: 60px;
+        border-radius: 50%;
+        background: white;
+        /*-web-kit-box-shadow:0px 2px 4px 0px rgba(0,0,0,0.50);
+    -moz-box-shadow:    0px 2px 4px 0px rgba(0,0,0,0.50);
+    box-shadow:         0px 2px 4px 0px rgba(0,0,0,0.50);*/
+      }
+      :host .badge core-icon {
+        width: 100%;
+        height: 100%;
+        display: block;
+        margin: auto;
+      }
+      :host .badge core-icon > svg {
+        fill: #515151;
+        transform: scale(.75);
+        -moz-transform: scale(.75);
+        -webkit-transform: scale(.75);
+      }
+      :host #text {
+        margin-left: 10px;
+      }
+      :host #title {
+        font-weight: 300;
+        font-family: 'Trebuchet', sans-serif;
+        font-size: 18px;
+        /*font-size: 4vw;*/
+        
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      :host #subtitle {
+        padding: 3px;
+        float: right;
+        font-size: 8px;
+        /*font-size: 2vw;*/
+        
+        font-weight: 300;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        font-family: 'Roboto', 'Helvetica', sans-serif;
+      }
+    </style>
+    <core-header-panel mode="waterfall-tall" tallclass="medium-tall">
+      <div class="core-header" horizontal layout center>
+        <div class="badge" horizontal layout center>
+          <core-icon id="img" icon="social:post-twitter"></core-icon>
+        </div>
+        <div id="text">
+          <div id="title">¿Cuál es el Sentimiento en <b>Twitter?</b>
+          </div>
+          <div id="subtitle">powered by Expression Engine</div>
+        </div>
+      </div>
+      </div>
+      <div id="content" horizontal layout wrap center></div>
+    </core-header-panel>
+    <div id="out"></div>
+    <x-websocket id="newCardSocket" url="{{socket}}"></x-websocket>
+    <x-websocket id="removeCardSocket" url="{{socket}}"></x-websocket>
+  </template>
+  <script>
+    Polymer('expression-app', {
+      attached: function() {
+        var self = this.$;
+        var socket = this.socket;
+        /*
+         * Comment Action WebSocket event handler.
+         */
+        self.content.addEventListener("tapped-action-comment", function(callback) {
+
+          var commentBox = document.createElement("fullbleed-comment-ui");
+          commentBox.setAttribute("cardtitle", callback.detail.title);
+          commentBox.setAttribute("cardid", callback.detail.id);
+          commentBox.setAttribute("socket", socket);
+          self.out.appendChild(commentBox);
+
+          var animation = new CoreAnimation();
+          animation.duration = 500;
+          animation.fill = "forwards"
+          animation.keyframes = [{
+            opacity: "0"
+          }, {
+            opacity: "1"
+          }];
+          animation.target = self.out;
+          animation.play();
+        });
+        /*
+         * New card WebSocket event handler.
+         */
+        self.newCardSocket.addEventListener("open", function() {
+          self.newCardSocket.send('{"path": "events", "message": "subscribe", "content": "card-new"}');
+        });
+        self.newCardSocket.addEventListener("message", function(event) {
+          if (JSON.parse(event.detail.data).data.name) {
+            var myArray = ["extension", "image:color-lens", "image:camera-alt", "flag", "explore", "extension", "maps:local-florist", "content-cut"];
+            var card = document.createElement("sentiment-card");
+            card.setAttribute("sentiment", "0");
+            card.setAttribute("cardname", JSON.parse(event.detail.data).data.name);
+            card.setAttribute("cardicon", myArray[Math.floor(Math.random() * myArray.length)]);
+            card.setAttribute("cardid", JSON.parse(event.detail.data).data.id);
+            card.setAttribute("socket", socket);
+            self.content.appendChild(card);
+          }
+        });
+        /*
+         * Remove card WebSocket event handler.
+         */
+        self.removeCardSocket.addEventListener("open", function() {
+          self.newCardSocket.send('{"path": "events", "message": "subscribe", "content": "card-delete"}');
+        });
+        self.removeCardSocket.addEventListener("message", function(event) {
+          console.log("cardDeleted");
+        });
+
+      }
+    });
+  </script>
+</polymer-element>

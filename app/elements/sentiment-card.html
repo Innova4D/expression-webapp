@@ -1,0 +1,357 @@
+<!--
+@license
+The MIT License (MIT)
+
+Copyright (c) 2014 The Photon Services Authors. All rights reserved.
+This code may only be used under the BSD style license
+found at http://opensource.org/licenses/MIT
+
+-->
+<!-- Sentiment Card View Component.
+Author: Francisco Gutiérrez (fsalvador23@gmail.com)
+-->
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-shadow/paper-shadow.html">
+<link rel="import" href="../bower_components/core-icons/core-icons.html">
+<link rel="import" href="../bower_components/core-icons/maps-icons.html">
+<link rel="import" href="../bower_components/core-icons/av-icons.html">
+<link rel="import" href="../bower_components/core-icons/device-icons.html">
+<link rel="import" href="../bower_components/core-icons/image-icons.html">
+<link rel="import" href="../bower_components/core-icons/hardware-icons.html">
+<link rel="import" href="../bower_components/x-websocket/dist/x-websocket.html">
+<link rel="import" href="action-container.html">
+<link rel="import" href="widget-sentiment-chart.html">
+<link rel="import" href="widget-demography-chart.html">
+<link href='//fonts.googleapis.com/css?family=Roboto:400,300,100' rel='stylesheet' type='text/css'>
+<polymer-element name="sentiment-card" attributes="sentiment cardicon cardid cardname socket" flex auto>
+  <template>
+    <style>
+      /* Template CSS -
+* Moving it into a separated SASS file when scaffolding into separate
+* repositories.
+*/
+      
+      *:not(html) {
+        -webkit-transform: translate3d(0, 0, 0);
+      }
+      :host {
+        padding-left: 12px;
+        padding-right: 12px;
+        padding-top: 9px;
+        padding-bottom: 9px;
+        width: 300px;
+        height: 210px;
+        font-family: 'Roboto', 'Helvetica', sans-serif;
+        /** Make the backside clickable **/
+        
+        transform: translateZ(1px);
+        -webkit-transform: translateZ(1px);
+        -moz-transform: translateZ(1px);
+        -webkit-font-smoothing: antialiased;
+      }
+      :host #card {
+        border-radius: 3px;
+        /*width:  300px;*/
+        
+        height: 210px;
+        /*Animation setup*/
+        
+        transition: transform 0.5s;
+        -moz-transition: -moz-transform 0.5s;
+        -webkit-transition: -webkit-transform 0.5s;
+        transform-style: preserve-3d;
+        -moz-transform-style: preserve-3d;
+        -webkit-transform-style: preserve-3d;
+        /* Make the backside clickable **/
+        
+        transform: translateZ(10px);
+        -webkit-transform: translateZ(10px);
+        -moz-transform: translateZ(10px);
+      }
+      :host #card.flipped {
+        transform: rotateY(180deg) translateZ(1px);
+        -moz-transform: rotateY(180deg) translateZ(1px);
+        -webkit-transform: rotateY(180deg) translateZ(1px);
+      }
+      :host #card.flippedBack {
+        transform: rotateY(0deg) translateZ(1px);
+        -moz-transform: rotateY(0deg) translateZ(1px);
+        -webkit-transform: rotateY(0deg) translateZ(1px);
+      }
+      :host #card #front {
+        /*width:  300px;*/
+        
+        border-radius: 3px;
+        height: 210px;
+        backface-visibility: hidden;
+        -moz-backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
+        transform: translateZ(1px);
+        -webkit-transform: translateZ(1px);
+        -moz-transform: translateZ(1px);
+        cursor: pointer;
+      }
+      :host #card #back {
+        border-radius: 3px;
+        /*width:  300px;*/
+        
+        height: 210px;
+        backface-visibility: hidden;
+        -moz-backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
+      }
+      :host #card #back {
+        transform: rotateY(180deg);
+        -moz-transform: rotateY(180deg);
+        -webkit-transform: rotateY(180deg);
+      }
+      /*
+* Polymer's Core-icon definition.
+*/
+      
+      :host #front #img {
+        fill: white;
+        width: 85%;
+        height: 85%;
+        display: block;
+        margin: auto;
+      }
+      :host .title {
+        position: absolute;
+        bottom: 0px;
+        margin: 10px;
+        width: 100%;
+        font-weight: 300;
+        font-size: 24px;
+        color: white;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        cursor: pointer;
+      }
+      :host widget-container {
+        position: absolute;
+        top: 40px;
+        left: 20px;
+      }
+      :host action-container {
+        position: absolute;
+        right: -17px;
+        top: -13px;
+      }
+      :host #widgetContainer {
+        height: 65%;
+      }
+      :host #cardid {
+        visibility: hidden;
+        position: absolute;
+      }
+    </style>
+    <div id="card" flex auto>
+      <div id="cardid">{{cardid}}</div>
+      <div id="front" select="front">
+        <core-icon id="img" icon="{{cardicon}}"></core-icon>
+        <h1 id="frontTitle" class='title'>{{cardname}}</h1>
+      </div>
+      <div id="back">
+        <div id="widgetContainer" horizontal layout end>
+          <div flex></div>
+          <widget-sentiment-chart id="sentimentChart" on-tap="{{sentimentTap}}" cardid="{{cardid}}" socket="{{socket}}"></widget-sentiment-chart>
+          <div flex></div>
+          <widget-demography-chart id="demographyChart" on-tap="{{demographyTap}}" active="true" cardid="{{cardid}}" socket="{{socket}}"></widget-demography-chart>
+          <div flex></div>
+          <div flex></div>
+        </div>
+        <action-container></action-container>
+        <h1 id="backTitle" class='title' on-tap="{{titleTapped}}">{{cardname}}</h1>
+      </div>
+      <paper-shadow z="1" id="myShadow" animated></paper-shadow>
+    </div>
+    <x-websocket id="cardSocket" url="{{socket}}"></x-websocket>
+  </template>
+  <script>
+    Polymer("sentiment-card", {
+      attached: function() {
+        var self = this.$;
+        var socket = this.socket;
+        var cardid = this.cardid;
+        /*
+         * WebSocket event handler.
+         */
+        self.cardSocket.addEventListener("open", function() {
+          /*** commented for testing purposes ***/
+          self.cardSocket.send('{"path":"events","message":"subscribe","content":"' + cardid + ':sentiment-final"}');
+        });
+        self.cardSocket.addEventListener("message", function(event) {
+          var cardname = this.cardname;
+          var sentiment = this.sentiment;
+          if (JSON.parse(event.detail.data).data >= 0.5) {
+            self.front.style.backgroundColor = "#2ECC71";
+            self.back.style.backgroundColor = "#2ECC71";
+            /*
+             * Next line causes a rendering bug when flipping the card in Chrome.
+             * Version 37.0.2062.124 (Flickering)
+             */
+            //self.card.style.backgroundColor = "#2ECC71";
+          } else if (JSON.parse(event.detail.data).data <= -0.5) {
+            self.front.style.backgroundColor = "#EA6153";
+            self.back.style.backgroundColor = "#EA6153";
+            /*
+             * Next line causes a rendering bug when flipping the card in Chrome.
+             * Version 37.0.2062.124 (Flickering)
+             */
+            // self.card.style.backgroundColor = "#EA6153";
+          } else {
+            self.front.style.backgroundColor = "#F39C12";
+            self.back.style.backgroundColor = "#F39C12";
+            /*
+             * Next line causes a rendering bug when flipping the card in Chrome.
+             * Version 37.0.2062.124 (Flickering)
+             */
+            // self.card .style.backgroundColor = "#F39C12";
+          }
+        });
+        /*
+         * Attached, DOM lifecycle: check for the sentiment overall:
+         */
+        var cardname = this.cardname;
+        var sentiment = this.sentiment;
+        if (sentiment > 1) {
+          self.front.style.backgroundColor = "#2ECC71";
+          self.back.style.backgroundColor = "#2ECC71";
+          /*
+           * Next line causes a rendering bug when flipping the card in Chrome.
+           * Version 37.0.2062.124 (Flickering)
+           */
+          // self.card.style.backgroundColor = "#2ECC71";
+        } else if (sentiment < -1) {
+          self.front.style.backgroundColor = "#EA6153";
+          self.back.style.backgroundColor = "#EA6153";
+          /*
+           * Next line causes a rendering bug when flipping the card in Chrome.
+           * Version 37.0.2062.124 (Flickering)
+           */
+          // self.card.style.backgroundColor = "#EA6153";
+        } else {
+          self.front.style.backgroundColor = "#F39C12";
+          self.back.style.backgroundColor = "#F39C12";
+          /*
+           * Next line causes a rendering bug when flipping the card in Chrome.
+           * Version 37.0.2062.124 (Flickering)
+           */
+          // self.card .style.backgroundColor = "#F39C12";
+        }
+        /*
+         * Do the flip:
+         */
+        this.addEventListener("click", function() {
+          self.card.className = "flipped";
+          self.back.style.display = "block";
+          self.front.style.display = "none";
+
+        });
+      },
+      ready: function() {
+        var self = this.$;
+        /*
+         * Sentiment visualization listeners.
+         */
+        self.sentimentChart.addEventListener('back-sentiment-chart-handler', function(e) {
+          var animation = new CoreAnimation();
+          animation.duration = 200;
+          animation.fill = "forwards"
+          animation.keyframes = [{
+            opacity: "0"
+          }, {
+            opacity: "1"
+          }];
+          animation.target = self.demographyChart;
+          animation.play();
+          animation.addEventListener('core-animation-finish', function(e) {
+            self.demographyChart.style.visibility = "visible";
+          });
+        });
+        self.demographyChart.addEventListener('back-demography-chart-handler', function(e) {
+          var animation = new CoreAnimation();
+          animation.duration = 200;
+          animation.fill = "forwards"
+          animation.keyframes = [{
+            opacity: "0"
+          }, {
+            opacity: "1"
+          }];
+          animation.target = self.sentimentChart;
+          animation.play();
+          animation.addEventListener('core-animation-finish', function(e) {
+            self.sentimentChart.style.visibility = "visible";
+          });
+
+          var anmTranslate = new CoreAnimation();
+          anmTranslate.duration = 500;
+          anmTranslate.fill = "forwards"
+          anmTranslate.keyframes = [{
+            transform: "translate(-50px,0px)"
+          }, {
+            transform: "translate(0px,0px)"
+          }];
+          anmTranslate.target = self.demographyChart;
+          anmTranslate.play();
+        });
+      },
+      sentimentTap: function() {
+        /*
+         * When tapping the sentiment widget:
+         */
+        var self = this.$;
+        var animation = new CoreAnimation();
+        animation.duration = 200;
+        animation.fill = "forwards"
+        animation.keyframes = [{
+          opacity: "1"
+        }, {
+          opacity: "0"
+        }];
+        animation.target = self.demographyChart;
+        animation.play();
+        animation.addEventListener('core-animation-finish', function(e) {
+          self.demographyChart.style.visibility = "hidden";
+        });
+      },
+      demographyTap: function() {
+        /*
+         * When tapping the demography widget:
+         */
+        var self = this.$;
+        self.demographyChart.addEventListener('tapped-demography-chart-button', function(e) {
+          /*
+           * The next animation vanishes the sentiment chart.
+           * Sets its visibility to hidden.
+           */
+          var animation = new CoreAnimation();
+          animation.duration = 200;
+          animation.fill = "forwards"
+          animation.keyframes = [{
+            opacity: "1"
+          }, {
+            opacity: "0"
+          }];
+          animation.target = self.sentimentChart;
+          animation.play();
+          animation.addEventListener('core-animation-finish', function(e) {
+            self.sentimentChart.style.visibility = "hidden";
+          });
+          /*
+           * The next animation centers the demography chart.
+           */
+          self.demographyChart.addEventListener('animation-demography-chart-finish', function(e) {});
+        });
+      },
+      titleTapped: function() {
+        var self = this.$;
+        self.card.className = "flippedBack";
+        self.back.style.display = "none";
+        self.front.style.display = "block";
+      }
+    });
+  </script>
+</polymer-element>
